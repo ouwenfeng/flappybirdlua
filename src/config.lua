@@ -1,4 +1,3 @@
-
 -- 0 - disable debug info, 1 - less debug info, 2 - verbose debug info
 DEBUG = 2
 
@@ -13,8 +12,8 @@ CC_DISABLE_GLOBAL = true
 
 -- for module display
 CC_DESIGN_RESOLUTION = {
-    width = 960,
-    height = 640,
+    width = 288,
+    height = 512,
     autoscale = "FIXED_HEIGHT",
     callback = function(framesize)
         local ratio = framesize.width / framesize.height
@@ -24,3 +23,14 @@ CC_DESIGN_RESOLUTION = {
         end
     end
 }
+
+-- 游戏参数
+
+GAME_START = 1
+GAME_OVER = 0
+GAME_INIT = -1
+PIPE_VARIATION_RANGE = 200
+PIPE_START_WIDTH = 500
+PIPE_BETWEEN_WIDTH = 170
+PIPE_SPACE = 50
+PIPE_WIDTH = 52
