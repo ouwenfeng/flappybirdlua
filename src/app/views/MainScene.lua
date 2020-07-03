@@ -8,7 +8,6 @@ function MainScene:onCreate()
     local downSpeed = 0
     local upSpeed = 0
     local score = 0
-    local medals = {}
     -- 背景
     display.newSprite("bg_day.png"):move(display.center):addTo(self)
 
@@ -56,16 +55,11 @@ function MainScene:onCreate()
         10
     )
     -- 奖牌
-    local medal1 =
+    local medal =
         display.newSprite("medals.png"):setName("newMedal"):move(
-        display.cx + math.random(200) + 350,
-        display.cy + math.random(200) - 100
-    ):hide():addTo(self, 8)
-    local medal2 =
-        display.newSprite("medals.png"):setName("newMedal"):move(
-        display.cx + math.random(200) + 350,
-        display.cy + math.random(200) - 100
-    ):hide():addTo(self, 8)
+        PIPE_START_WIDTH + 90,
+        display.cy + math.random(-150, 150)
+    ):addTo(self, 8)
 
     -- 开始按钮
     local beginSprite =
@@ -74,8 +68,7 @@ function MainScene:onCreate()
     -- 游戏开始
     local function gameStart()
         print("gameStart")
-        medal1:show()
-        medal2:show()
+        medal:show()
         nowScoreLabel:show()
         beginSprite:hide()
         cc.Director:getInstance():getEventDispatcher():pauseEventListenersForTarget(beginSprite)
@@ -119,9 +112,7 @@ function MainScene:onCreate()
         textGameOver:hide()
         score = 0
         nowScoreLabel:setString(score)
-
-        medal1:move(display.cx + math.random(200) + 350, display.cy + math.random(200) - 100)
-        medal2:move(display.cx + math.random(200) + 350, display.cy + math.random(200) - 100)
+        medal:move(PIPE_START_WIDTH + 90, display.cy + math.random(-150, 150)):setName("newMedal")
         gameStart()
     end
 
@@ -214,39 +205,20 @@ function MainScene:onCreate()
     --  更新定时器
     local function update()
         if gameStatus == GAME_START then
-            -- 奖牌的移动
-            medal1:setPositionX(medal1:getPositionX() - 1)
-            medal2:setPositionX(medal2:getPositionX() - 1)
-            if medal1:getPositionX() <= -medal1:getContentSize().width / 2 then
-                medal1:setPosition(
-                    CC_DESIGN_RESOLUTION.width + medal1:getContentSize().width + math.random(100),
-                    display.cy - 100 + math.random(200)
-                )
+            medal:setPositionX(medal:getPositionX() - 1)
+            if medal:getPositionX() <= -PIPE_WIDTH / 2 then
+                medal:show()
+                medal:setName("newMedal")
+                medal:setPosition(CC_DESIGN_RESOLUTION.width + PIPE_WIDTH / 2, display.cy + math.random(-150, 150))
             end
-            if medal2:getPositionX() <= -medal2:getContentSize().width / 2 then
-                medal2:setPosition(
-                    CC_DESIGN_RESOLUTION.width + medal2:getContentSize().width + math.random(100),
-                    display.cy - 100 + math.random(200)
-                )
-            end
-
-            if cc.rectIntersectsRect(birdSprite:getBoundingBox(), medal1:getBoundingBox()) then
-                print("get medal")
-                score = score + 1
+            if
+                cc.rectIntersectsRect(birdSprite:getBoundingBox(), medal:getBoundingBox()) and
+                    medal:getName() == "newMedal"
+             then
+                medal:setName("passed")
+                medal:hide()
+                score = score + 5
                 nowScoreLabel:setString(tostring(score))
-                medal1:setPosition(
-                    CC_DESIGN_RESOLUTION.width + medal1:getContentSize().width + math.random(100),
-                    display.cy - 100 + math.random(200)
-                )
-            end
-            if cc.rectIntersectsRect(birdSprite:getBoundingBox(), medal2:getBoundingBox()) then
-                print("get medal")
-                score = score + 1
-                nowScoreLabel:setString(tostring(score))
-                medal2:setPosition(
-                    CC_DESIGN_RESOLUTION.width + medal2:getContentSize().width + math.random(100),
-                    display.cy - 100 + math.random(200)
-                )
             end
 
             -- 小鸟的重力
