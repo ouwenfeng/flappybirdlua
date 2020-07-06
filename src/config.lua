@@ -19,7 +19,7 @@ CC_DESIGN_RESOLUTION = {
         local ratio = framesize.width / framesize.height
         if ratio <= 1.34 then
             -- iPad 768*1024(1536*2048) is 4:3 screen
-            return {autoscale = "FIXED_WIDTH"}
+            return {autoscale = "FIXED_HEIGHT"}
         end
     end
 }
@@ -29,7 +29,7 @@ CC_DESIGN_RESOLUTION = {
 GAME_START = 1
 GAME_OVER = 0
 GAME_INIT = -1
-PIPE_VARIATION_RANGE = 200
+PIPE_VARIATION_RANGE = 100
 PIPE_START_WIDTH = 350
 PIPE_BETWEEN_WIDTH = 170
 PIPE_SPACE = 50

@@ -8,12 +8,23 @@ function MainScene:onCreate()
     local downSpeed = 0
     local upSpeed = 0
     local score = 0
+    local visiblieSize = cc.Director:getInstance():getVisibleSize()
+    -- print(CC_DESIGN_RESOLUTION.width)
+    -- print(CC_DESIGN_RESOLUTION.height)
+    -- print(display.cx)
+    -- print(display.cy)
+    -- print(visiblieSize.width)
+    -- print(visiblieSize.height)
+    -- print(display.sizeInPixels.width)
+    -- print(display.sizeInPixels.height)
     -- 背景
-    display.newSprite("bg_day.png"):move(display.center):addTo(self)
-
+    local bgSprite = display.newSprite("bg_day.png"):move(display.center):addTo(self)
+    bgSprite:setContentSize(cc.rect(0, 0, visiblieSize.width, visiblieSize.height))
     -- 地板
     local land1 = display.newSprite("land.png"):move(display.cx, 0):setName("land1"):addTo(self)
     local land2 = display.newSprite("land.png"):move(display.cx, 0):setName("land2"):addTo(self)
+    land1:setContentSize(cc.rect(0, 0, visiblieSize.width, land1:getContentSize().height))
+    land2:setContentSize(cc.rect(0, 0, visiblieSize.width, land2:getContentSize().height))
 
     -- 标题
     local title = display.newSprite("title.png"):move(display.cx, display.cy + 100):setName("title"):addTo(self)
@@ -50,15 +61,15 @@ function MainScene:onCreate()
         10
     )
     local nowScoreLabel =
-        cc.Label:createWithSystemFont("0", "黑体", 50):move(display.cx, display.cy + 200):setName("nowScoreLabel"):hide():addTo(
+        cc.Label:createWithSystemFont("0", "黑体", 50):move(display.cx, display.cy + 150):setName("nowScoreLabel"):hide():addTo(
         self,
-        10
+        9
     )
     -- 奖牌
     local medal =
         display.newSprite("medals.png"):setName("newMedal"):move(
         PIPE_START_WIDTH + 90,
-        display.cy + math.random(-150, 150)
+        display.cy + math.random(-120, 120)
     ):addTo(self, 8)
 
     -- 开始按钮
@@ -79,7 +90,7 @@ function MainScene:onCreate()
             local pipeUp =
                 display.newSprite("pipe_up.png"):move(
                 PIPE_START_WIDTH + i * PIPE_BETWEEN_WIDTH,
-                CC_DESIGN_RESOLUTION.height - PIPE_SPACE + r
+                visiblieSize.height - PIPE_SPACE + r
             ):setName("newPipe"):addTo(self)
             local pipeDown =
                 display.newSprite("pipe_down.png"):move(PIPE_START_WIDTH + i * PIPE_BETWEEN_WIDTH, r):setName("newPipe"):addTo(
@@ -112,7 +123,7 @@ function MainScene:onCreate()
         textGameOver:hide()
         score = 0
         nowScoreLabel:setString(score)
-        medal:move(PIPE_START_WIDTH + 90, display.cy + math.random(-150, 150)):setName("newMedal")
+        medal:move(PIPE_START_WIDTH + 90, display.cy + math.random(-120, 120)):setName("newMedal")
         gameStart()
     end
 
@@ -205,11 +216,12 @@ function MainScene:onCreate()
     --  更新定时器
     local function update()
         if gameStatus == GAME_START then
+            -- 奖牌的生成与移动
             medal:setPositionX(medal:getPositionX() - 1)
             if medal:getPositionX() <= -PIPE_WIDTH / 2 then
                 medal:show()
                 medal:setName("newMedal")
-                medal:setPosition(CC_DESIGN_RESOLUTION.width + PIPE_WIDTH / 2, display.cy + math.random(-150, 150))
+                medal:setPosition(visiblieSize.width + PIPE_WIDTH / 2, display.cy + math.random(-120, 120))
             end
             if
                 cc.rectIntersectsRect(birdSprite:getBoundingBox(), medal:getBoundingBox()) and
@@ -230,7 +242,7 @@ function MainScene:onCreate()
             if land2:getPositionX() <= land2:getContentSize().width / 2 then
                 land1:setPosition(0, 0)
             end
-            -- 管道的移动
+
             local r = 100
             for k, v in pairs(pipes) do
                 v:setPositionX(v:getPositionX() - 1)
@@ -242,12 +254,13 @@ function MainScene:onCreate()
                         v:setName("passed")
                     end
                 end
+                -- 管道的移动
                 if v:getPositionX() < -PIPE_WIDTH / 2 then
-                    v:setPositionX(CC_DESIGN_RESOLUTION.width + PIPE_WIDTH / 2)
+                    v:setPositionX(visiblieSize.width + PIPE_WIDTH / 2)
                     v:setName("newPipe")
                     if k % 2 == 1 then
                         r = math.random(PIPE_VARIATION_RANGE)
-                        v:setPositionY(CC_DESIGN_RESOLUTION.height - PIPE_SPACE + r)
+                        v:setPositionY(visiblieSize.height - PIPE_SPACE + r)
                     else
                         v:setPositionY(r)
                     end
@@ -271,7 +284,7 @@ function MainScene:onCreate()
                 end
             end
             -- 天
-            if birdSprite:getPositionY() > CC_DESIGN_RESOLUTION.height then
+            if birdSprite:getPositionY() > visiblieSize.height then
                 gameOver()
             end
         end
@@ -286,7 +299,7 @@ function MainScene:onCreate()
             end
         end
     end
-    self:onUpdate(update)
+    self:onUpdate(update) -- 启动定时器
 end
 
 return MainScene
